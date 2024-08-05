@@ -1,0 +1,12 @@
+automation:
+  - alias: "Set Color of Lidl Light"
+    trigger:
+      platform: state
+      entity_id: sensor.some_sensor  # De exemplu, o comandă de la API-ul Flask
+    action:
+      - service: light.turn_on
+        target:
+          entity_id: light.lidl_light
+        data:
+          brightness: 255
+          rgb_color: [255, 87, 51]  # Culoarea în format RGB

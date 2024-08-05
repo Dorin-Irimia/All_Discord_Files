@@ -1,0 +1,4 @@
+mqtt:
+  broker: IP_ADRESA_BROKERULUI
+  username: USERNAME
+  password: PAROLA
