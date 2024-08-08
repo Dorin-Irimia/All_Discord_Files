@@ -3,174 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control Becurilor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <title>Bedroom Light Control</title>
+    <style>
+        /* Add your CSS styles here */
+        #colorPicker {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+            border: 1px solid #000;
+        }
+    </style>
 </head>
 <body>
-    
-    <div> 
-        <h1>
-            Welcome on {{name}} pannel
-        </h1>
-    <script>
-        function toggleLight(lightId) {
-            const color = document.getElementById('colorPicker').value; //se va stoca culoarea aleasa de ut. daca este declarata
-            const action = document.getElementById(lightId).innerText.include('Aprinde') ? 'on' : 'off'; //Determinam actiunea on/off pe baza textului butonului
-            
-            //trimitem cerere catre API
-            $.ajax({
-                url: '/api/toggle_light',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 'light_id': lightId, 'action': action, 'color': color }),
-                success: function(response) {
-                    if (response.status === 'success') {
-                        const button = document.getElementById(lightId);
-                        if(action === 'on'){
-                            button.innerText = `Becul este aprins, apasa pentru a stinge`;
-                            button.style.backgroundColor = color;
-                            document.getElementById('colorPicker').style.display = 'block';
-                        } else {
-                            button.innerText = `Aprinde $(lightId === 'owl' ? 'Owl' : 'Becul din dormitor'}`;
-                            button.style.backgroundColor = 'black';
-                            document.getElementById('colorPicker').style.display = 'none';
-                        }
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function(xhr, status, error) { 
-                    alert('Eroare la trimiterea comenzii: ' + error);
-                }
-            });
-        }             
-        //                 // Schimbă culoarea butonului
-        //                 document.getElementById(lightId).style.backgroundColor = action === 'on' ? 'green' : 'red';
-        //             } else {
-        //                 alert(response.message);
-        //             }
-        //         },
-        //         error: function(xhr, status, error) {
-        //             alert('Eroare la trimiterea comenzii: ' + error);
-        //         }
-        //     });
-        // }
-    </script>
-
-    <div class="container">
-        <h1>Control Becurilor</h1>
-        <div class="light-control">
-            <button id="owl" onclick="toggleLight('owl', 'on')">Aprinde Owl</button>
-            <button id="bedroom" onclick="toggleLight('bedroom', 'on')">Aprinde Becul din Dormitor</button>
-            <input type="color" id="colorPicker" name="bedroom_color" onchange="setColor('bedroom_color_light', this.value)" value="#00ffff" style="display: none;">
-            <input type="color" id="colorPicker" name="bedroom_color" >
-        </div>
-
-        <!-- <div class="light-control">
-            <h2>Becul Owl</h2>
-            <button onclick="toggleLight('owl', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('owl', false)">Oprit</button>
-        </div>
-        <div class="light-control">
-            <h2>Becul din Dormitor</h2>
-            <button onclick="toggleLight('bedroom_light', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('bedroom_light', false)">Oprit</button>
-        </div>
-        <div class="light-control">
-            <h2>Becul Colorat din Dormitor</h2>
-            <button onclick="toggleLight('bedroom_color_light', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('bedroom_color_light', false)">Oprit</button>
-            <div class="color-picker">
-                <label for="bedroom_color">Alege culoarea:</label>
-                <input type="color" id="bedroom_color" name="bedroom_color" onchange="setColor('bedroom_color_light', this.value)">
-            </div>
-        </div>
-        <div class="light-control">
-            <h2>Becul de pe Birou</h2>
-            <button onclick="toggleLight('desk_light', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('desk_light', false)">Oprit</button>
-        </div>
-        <div class="light-control">
-            <h2>Becul Colorat de pe Birou</h2>
-            <button onclick="toggleLight('desk_color_light', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('desk_color_light', false)">Oprit</button>
-            <div class="color-picker">
-                <label for="desk_color">Alege culoarea:</label>
-                <input type="color" id="desk_color" name="desk_color" onchange="setColor('desk_color_light', this.value)">
-            </div>
-        </div>
-        <div class="light-control">
-            <h2>Bandă LED</h2>
-            <button onclick="toggleLight('led_strip', true)">Pornit</button>
-            <button class="off" onclick="toggleLight('led_strip', false)">Oprit</button>
-        </div> -->
+    <h1>Control Bedroom Light</h1>
+    <div>
+        <label for="colorPicker">Select Color:</label>
+        <input type="color" id="colorPicker" value="#ffffff">
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            initializerLights();
-        });
+    <div>
+        <label for="lightSwitch">Light On/Off:</label>
+        <button id="lightSwitch" onclick="toggleLight()">Off</button>
+    </div>
 
-        function initializerLights() {
-            //Cerere pentru obtinerea starii initiale si a culorii aferente becurilor
-            $.ajax({
-                url: 'http://192.168.0.100/api/get_light_state',
-                type: 'GET',
-                success: function(response){
-                    if (response.status === 'success') {
-                        const lightId = response.light_id;
-                        const button = document.getElementById(lightId);
-                        const color = response.color;
-                        const state = response.state;
-                        
-                        if (state === 'on') {
-                            button.innerText = `Becul este aprins, apasă pentru a stinge`;
-                            button.style.backgroundColor = color;
-                            document.getElementById('colorPicker').style.display = 'block';
-                            document.getElementById('colorPicker').value = color;
-                        } else {
-                            button.innerText = `Aprinde ${lightId === 'owl' ? 'Owl' : 'Becul din Dormitor'}`;
-                            button.style.backgroundColor = 'black';
-                        }
-                    }
+    <script>
+        let lightState = false;
+        let lightColor = "#ffffff";
+
+        function toggleLight() {
+            lightState = !lightState;
+            updateLight();
+        }
+
+        function updateLight() {
+            lightColor = document.getElementById('colorPicker').value;
+            document.getElementById('lightSwitch').style.backgroundColor = lightColor;
+            document.getElementById('lightSwitch').innerText = lightState ? "On" : "Off";
+
+            fetch('/api/bedroom_color_light', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
                 },
-                error: function(xhr, status, error) {
-                    alert('Eroare la obținerea stării inițiale: ' + error);
+                body: JSON.stringify({ state: lightState, color: lightColor })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    alert("Failed to update the light: " + data.error);
                 }
             });
         }
 
-        function toggleLight(lightId) {
-            const color = document.getElementById('colorPicker').value;
-            const action = document.getElementById(lightId).innerText.includes('Aprinde') ? 'on' : 'off';
-
-            $.ajax({
-                url: 'http://192.168.0.100/api/toggle_light',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ 'light_id': lightId, 'action': action, 'color': color }),
-                success: function(response) {
-                    if (response.status === 'success') {
-                        const button = document.getElementById(lightId);
-                        if (action === 'on') {
-                            button.innerText = `Becul este aprins, apasă pentru a stinge`;
-                            button.style.backgroundColor = color;
-                            document.getElementById('colorPicker').style.display = 'block';
-                        } else {
-                            button.innerText = `Aprinde ${lightId === 'owl' ? 'Owl' : 'Becul din Dormitor'}`;
-                            button.style.backgroundColor = 'black';
-                            document.getElementById('colorPicker').style.display = 'none';
-                        }
-                    } else {
-                        alert(response.message);
-                    }
-                },
-                error: function(xhr, status, error) {
-                    alert('Eroare la trimiterea comenzii: ' + error);
-                }
-            });
-    }
-</script>
-
+        document.getElementById('colorPicker').addEventListener('change', updateLight);
+    </script>
 </body>
 </html>
