@@ -24,9 +24,10 @@ print(response.json())
 app = Flask(__name__)
 
 
-# @app.route('/')
-# def hello():
-#     return "mergeeeee"
+@app.route('/')
+def hello():
+  def index():
+    return render_template('index.html')
 
 # Starea becului (False pentru oprit, True pentru pornit)
 owl_state = False
