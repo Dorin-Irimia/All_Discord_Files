@@ -60,13 +60,14 @@
 
     <div class="container">
         <h1>Control Becurilor</h1>
-        <div>
+        <div class="light-control">
             <button id="owl" onclick="toggleLight('owl', 'on')">Aprinde Owl</button>
             <button id="bedroom" onclick="toggleLight('bedroom', 'on')">Aprinde Becul din Dormitor</button>
-            <input type="color" id="colorPicker" value="#00ff00" style="display: none;">
+            <input type="color" id="colorPicker" name="bedroom_color" onchange="setColor('bedroom_color_light', this.value)" value="#00ffff" style="display: none;">
+            <input type="color" id="colorPicker" name="bedroom_color" >
         </div>
-        
-        <div class="light-control">
+
+        <!-- <div class="light-control">
             <h2>Becul Owl</h2>
             <button onclick="toggleLight('owl', true)">Pornit</button>
             <button class="off" onclick="toggleLight('owl', false)">Oprit</button>
@@ -103,7 +104,7 @@
             <h2>Bandă LED</h2>
             <button onclick="toggleLight('led_strip', true)">Pornit</button>
             <button class="off" onclick="toggleLight('led_strip', false)">Oprit</button>
-        </div>
+        </div> -->
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function(){
