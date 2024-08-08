@@ -93,6 +93,9 @@ def toggle_light():
     except requests.exceptions.RequestException as e:
         return jsonify({'status': 'error', 'message': str(e)}), 500
 
+@app.route('/greeting')
+def greeting():
+    return render_template('index.html', name='Home')
 
 if __name__ == '__main__':
     app.run(debug = True)    # host='0.0.0.0', port=5000)
