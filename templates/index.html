@@ -5,8 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Control Becurilor</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <div>
+        <button id="owl" onclick="toggleLight('owl', 'on')">Aprinde Owl</button>
+        <button id="bedroom" onclick="toggleLight('bedroom', 'on')">Aprinde Becul din Dormitor</button>
+    </div>
+
+    <script>
+        function toggleLight(lightId, action) {
+            $.ajax({
+                url: '/api/toggle_light',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ 'light_id': lightId, 'action': action }),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        // Schimbă culoarea butonului
+                        document.getElementById(lightId).style.backgroundColor = action === 'on' ? 'green' : 'red';
+                    } else {
+                        alert(response.message);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('Eroare la trimiterea comenzii: ' + error);
+                }
+            });
+        }
+    </script>
+    
     <div class="container">
         <h1>Control Becurilor</h1>
         <div class="light-control">

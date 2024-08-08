@@ -1,28 +1,11 @@
 
 from flask import Flask, render_template, request, jsonify
-'''
-for HomeAssistant code is belw:
-
 import requests
 
-home_assistant_url = "http://IP_ADRESA_HOME_ASSISTANT:8123/api/services/light/turn_on"
-headers = {
-    "Authorization": "Bearer YOUR_LONG_LIVED_ACCESS_TOKEN",
-    "Content-Type": "application/json",
-}
-
-data = {
-    "entity_id": "light.lidl_light",
-    "brightness": 255,
-    "rgb_color": [255, 87, 51],  # Exemplu de culoare
-}
-
-response = requests.post(home_assistant_url, headers=headers, json=data)
-print(response.json())
-'''
 
 app = Flask(__name__)
 
+ESP8266_IP = ESP8266_IP = "http://<ESP8266_IP>"  # voi inlocui IP ul cu cel la care este ESP ul 
 
 @app.route('/')
 def index():
@@ -95,126 +78,22 @@ def led_strip():
         return jsonify({'success': True, 'state': led_strip_state})
     return jsonify({'state': led_strip_state})
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-    
-    '''
-@app.rute('/')
-def home():
-    return render_template('index.html')
+@app.route('/api/toggle_light', methods=['POST'])
+def toggle_light():
+    light_id = request.json.get('light_id')
+    action = request.json.get('action')
 
-@app.route('/api/owl', methods=['GET'])
-def get_owl_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': owl_state})
-
-@app.route('/api/bedroom_light', methods=['GET'])
-def get_bedroom_light_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': bedroom_light})
-
-@app.route('/api/bedroom_color_light', methods=['GET'])
-def get_bedroom_color_light_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': bedroom_color_light})
-
-@app.route('/api/desk_light', methods=['GET'])
-def get_desk_light_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': desk_light})
-
-@app.route('/api/desk_color_light', methods=['GET'])
-def get_desk_color_light_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': desk_color_light})
-
-@app.route('/api/led_strip', methods=['GET'])
-def get_led_strip_state():
-    """
-    Obține starea curentă a becului.
-    """
-    return jsonify({'state': led_strip})
-
-
-
-@app.route('/api/owl', methods=['POST'])
-def set_owl_state():
-    """
-    Setează starea becului.
-    """
-    global owl_state
-    data = request.json
-    owl_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': owl_state})
-
-@app.route('/api/bedroom_light', methods=['POST'])
-def set_bedroom_light_state():
-    """
-    Setează starea becului.
-    """
-    global bedroom_light_state
-    data = request.json
-    bedroom_light_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': bedroom_light_state})
-
-@app.route('/api/bedroom_color_light', methods=['POST'])
-def set_bedroom_color_light_state():
-    """
-    Setează starea becului.
-    """
-    global bedroom_color_light_state
-    data = request.json
-    bedroom_color_light_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': bedroom_color_light_state})
-
-@app.route('/api/desk_light', methods=['POST'])
-def set_desk_light_state():
-    """
-    Setează starea becului.
-    """
-    global desk_light_state
-    data = request.json
-    desk_light_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': desk_light_state})
-
-@app.route('/api/desk_color_light', methods=['POST'])
-def set_desk_color_light_state():
-    """
-    Setează starea becului.
-    """
-    global desk_color_light_state
-    data = request.json
-    desk_color_light_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': desk_color_light_state})
-
-@app.route('/api/led_strip', methods=['POST'])
-def set_desk_color_light_state():
-    """
-    Setează starea becului.
-    """
-    global led_strip_state
-    data = request.json
-    led_strip_state = data.get('state', False)
-    # Aici adaugă logica pentru a trimite comanda la ESP8266 sau Home Assistant
-    return jsonify({'success': True, 'state': led_strip_state})
-
+    try:
+        # Trimitere comanda către ESP8266
+        response = requests.get(f"{ESP8266_IP}/{light_id}/{action}")
+        if response.status_code == 200:
+            return jsonify({'status': 'success', 'message': f'{action.capitalize()} successfully'})
+        else:
+            return jsonify({'status': 'error', 'message': 'Failed to communicate with ESP8266'}), 500
+    except requests.exceptions.RequestException as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-'''
+    app.run(debug = True)    # host='0.0.0.0', port=5000)
+ 
