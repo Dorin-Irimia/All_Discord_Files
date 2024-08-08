@@ -1,5 +1,5 @@
 
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 '''
 for HomeAssistant code is belw:
 
@@ -25,8 +25,7 @@ app = Flask(__name__)
 
 
 @app.route('/')
-def hello():
-  def index():
+def index():
     return render_template('index.html')
 
 # Starea becului (False pentru oprit, True pentru pornit)
